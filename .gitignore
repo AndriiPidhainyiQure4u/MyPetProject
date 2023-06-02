@@ -1,0 +1,5 @@
+/.idea/
+.php-cs-fixer.cache
+.env
+./server/.env
+/server/db_data/
