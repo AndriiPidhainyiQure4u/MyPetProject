@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Modules\Auth\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 
 use Modules\Auth\Service\PasswordHasher;
 
@@ -51,17 +52,17 @@ class User
         Id $id,
         \DateTimeImmutable $date,
         Email $email,
-        NetworkIdentity $identity
+        Network $network
     ): self {
         $user = new self($id, $date, $email, Status::active());
-        $user->networks->append($identity);
+        $user->networks->append($network);
 
         return $user;
     }
 
-    public function attachNetwork(NetworkIdentity $identity): void
+    public function attachNetwork(Network $identity): void
     {
-        /** @var NetworkIdentity $existing */
+        /** @var Network $existing */
         foreach ($this->networks as $existing) {
             if ($existing->isEqualTo($identity)) {
                 throw new \DomainException('Network is already attached.');
@@ -71,11 +72,11 @@ class User
     }
 
     /**
-     * @return NetworkIdentity[]
+     * @return Network[]
      */
     public function getNetworks(): array
     {
-        /* @var NetworkIdentity[] */
+        /* @var Network[] */
         return $this->networks->getArrayCopy();
     }
 

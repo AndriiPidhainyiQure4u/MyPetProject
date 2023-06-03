@@ -13,7 +13,7 @@ interface UserRepository
      */
     public function findByJoinConfirmToken(string $token): ?User;
 
-    public function hasByNetwork(NetworkIdentity $identity): bool;
+    public function hasByNetwork(Network $identity): bool;
 
     /**
      * @throws \DomainException

@@ -6,7 +6,7 @@ namespace Modules\Auth\Test\Unit\Builder;
 
 use Modules\Auth\Entity\User\Email;
 use Modules\Auth\Entity\User\Id;
-use Modules\Auth\Entity\User\NetworkIdentity;
+use Modules\Auth\Entity\User\Network;
 use Modules\Auth\Entity\User\Token;
 use Modules\Auth\Entity\User\User;
 use Ramsey\Uuid\Uuid;
@@ -20,7 +20,7 @@ class UserBuilder
     private Token $joinConfirmToken;
     private bool $active = false;
 
-    private ?NetworkIdentity $networkIdentity = null;
+    private ?Network $networkIdentity = null;
 
     public function __construct()
     {
@@ -31,10 +31,10 @@ class UserBuilder
         $this->joinConfirmToken = new Token(Uuid::uuid4()->toString(), $this->date->modify('+1 day'));
     }
 
-    public function viaNetwork(NetworkIdentity $identity = null): self
+    public function viaNetwork(Network $identity = null): self
     {
         $clone = clone $this;
-        $clone->networkIdentity = $identity ?? new NetworkIdentity('vk', '0000001');
+        $clone->networkIdentity = $identity ?? new Network('vk', '0000001');
 
         return $clone;
     }

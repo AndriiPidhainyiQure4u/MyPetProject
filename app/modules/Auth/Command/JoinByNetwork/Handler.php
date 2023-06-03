@@ -6,7 +6,7 @@ namespace Modules\Auth\Command\JoinByNetwork;
 
 use Modules\Auth\Entity\User\Email;
 use Modules\Auth\Entity\User\Id;
-use Modules\Auth\Entity\User\NetworkIdentity;
+use Modules\Auth\Entity\User\Network;
 use Modules\Auth\Entity\User\User;
 use Modules\Auth\Entity\User\UserRepository;
 use Modules\Flusher;
@@ -24,11 +24,11 @@ class Handler
 
     public function handle(Command $command): void
     {
-        $identity = new NetworkIdentity($command->network, $command->identity);
+        $identity = new Network($command->network, $command->identity);
         $email = new Email($command->email);
 
         if ($this->users->hasByNetwork($identity)) {
-            throw new \DomainException('User with this network already exists.');
+            throw new \DomainException('User with this name already exists.');
         }
 
         if ($this->users->hasByEmail($email)) {

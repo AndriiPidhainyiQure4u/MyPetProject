@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Auth\Command\AttachNetwork;
 
 use Modules\Auth\Entity\User\Id;
-use Modules\Auth\Entity\User\NetworkIdentity;
+use Modules\Auth\Entity\User\Network;
 use Modules\Auth\Entity\User\UserRepository;
 use Modules\Flusher;
 
@@ -22,10 +22,10 @@ class Handler
 
     public function handle(Command $command): void
     {
-        $identity = new NetworkIdentity($command->network, $command->identity);
+        $identity = new Network($command->network, $command->identity);
 
         if ($this->users->hasByNetwork($identity)) {
-            throw new \DomainException('User with this network already exists.');
+            throw new \DomainException('User with this name already exists.');
         }
 
         $user = $this->users->get(new Id($command->id));
