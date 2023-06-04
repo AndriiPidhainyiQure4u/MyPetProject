@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Modules\Auth\Test\Unit\Entitiy\User;
 
+use InvalidArgumentException;
 use Modules\Auth\Entity\User\Status;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Status
+ * @covers Status
  */
 class StatusTest extends TestCase
 {
@@ -26,5 +27,11 @@ class StatusTest extends TestCase
 
         self::assertFalse($status->isWait());
         self::assertTrue($status->isActive());
+    }
+
+    public function testIncorrect(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Status('none');
     }
 }

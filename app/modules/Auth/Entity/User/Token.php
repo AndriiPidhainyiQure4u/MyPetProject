@@ -4,11 +4,24 @@ declare(strict_types=1);
 
 namespace Modules\Auth\Entity\User;
 
+use Doctrine\ORM\Mapping as ORM;
 use Webmozart\Assert\Assert;
 
+/**
+ * @ORM\Embeddable
+ */
 class Token
 {
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
     private string $value;
+
+    /**
+     * @var \DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable", nullable=true)
+     */
     private \DateTimeImmutable $expires;
 
     public function __construct(string $value, \DateTimeImmutable $expires)
@@ -46,5 +59,10 @@ class Token
     public function isExpiredTo(\DateTimeImmutable $date): bool
     {
         return $this->expires <= $date;
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->value);
     }
 }
