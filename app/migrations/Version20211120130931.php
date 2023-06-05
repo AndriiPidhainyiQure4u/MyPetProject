@@ -36,7 +36,6 @@ final class Version20211120130931 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('DROP TABLE book_book_category');
         $this->addSql('ALTER TABLE book DROP slug');
         $this->addSql('ALTER TABLE book DROP image');

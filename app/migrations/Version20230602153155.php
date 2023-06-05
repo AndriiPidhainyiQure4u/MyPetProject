@@ -52,7 +52,6 @@ final class Version20230602153155 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('DROP SEQUENCE book_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE book_category_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE book_format_id_seq CASCADE');

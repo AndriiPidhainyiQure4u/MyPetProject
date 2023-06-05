@@ -41,3 +41,7 @@ services:
     App\Listener\ValidationExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, priority: 15 }
+
+    App\Listener\Doctrine\FixPostgresSQLDefaultSchemaListener:
+        tags:
+            - { name: doctrine.event_listener, event: postGenerateSchema }
