@@ -16,7 +16,7 @@ class StatusType extends StringType
         return $value instanceof Status ? $value->getName() : $value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?Status
     {
         return !empty($value) ? new Status((string) $value) : null;
     }
