@@ -29,8 +29,6 @@ RUN set -ex \
        # && docker-php-ext-enable redis.so
 
 ## Postgres
-#RUN docker-php-ext-install pdo pdo_pgsql
-# Postgres
 RUN apk add --no-cache libpq-dev && docker-php-ext-install pdo_pgsql
 
 

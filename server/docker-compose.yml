@@ -33,6 +33,21 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data:rw
 
+  hoverfly:
+    container_name: hoverfly
+    image: spectolabs/hoverfly:v1.3.4
+    command:
+      - "-webserver"
+      - "-response-body-files-path=/hoverfly_app/responses"
+      - "-import=/hoverfly_app/simulations/recommend.simulation.json"
+    volumes:
+      - "./hoverfly:/hoverfly_app:ro"
+    ports:
+      - "8500:8500"
+
+
+
+
 #  rabbitmq3:
 #    container_name: "rabbitmq"
 #    image: rabbitmq:3-management
