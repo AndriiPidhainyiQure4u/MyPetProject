@@ -19,6 +19,13 @@ class RecommendationController extends AbstractController
     {
     }
 
+    /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns recommendations for the book",
+     *     @Model(type=RecommendedBookListResponse::class)
+     * )
+     */
     #[Route(path: '/api/v1/book/{id}/recommendations', methods: ['GET'])]
     #[OA\Response(response: 200, description: 'Returns recommendations for the book', attachables: [new Model(type: RecommendedBookListResponse::class)])]
     public function recommendationsByBookId(int $id): Response

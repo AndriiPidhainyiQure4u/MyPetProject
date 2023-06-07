@@ -11,7 +11,10 @@ class RecommendedBook
     private string $title;
 
     private string $slug;
+    private string $image;
     private string $shortDescription;
+
+
 
     public function getId(): int
     {
@@ -43,6 +46,17 @@ class RecommendedBook
     public function setSlug(string $slug): RecommendedBook
     {
         $this->slug = $slug;
+        return $this;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): RecommendedBook
+    {
+        $this->image = $image;
         return $this;
     }
 
