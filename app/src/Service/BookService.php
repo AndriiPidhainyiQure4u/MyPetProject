@@ -22,10 +22,10 @@ use Doctrine\Common\Collections\Collection;
 final class BookService
 {
     public function __construct(
-        private BookRepository $bookRepository,
-        private BookCategoryRepository $bookCategoryRepository,
-        private ReviewRepository $reviewRepository,
-        private RatingService $ratingService,
+        private readonly BookRepository $bookRepository,
+        private readonly BookCategoryRepository $bookCategoryRepository,
+        private readonly ReviewRepository $reviewRepository,
+        private readonly RatingService $ratingService,
     ) {
     }
 
