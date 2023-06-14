@@ -7,6 +7,7 @@ namespace App\Tests\Service;
 use App\Repository\ReviewRepository;
 use App\Service\RatingService;
 use App\Tests\AbstractTestCase;
+use App\Service\Rating;
 
 class RatingServiceTest extends AbstractTestCase
 {
@@ -15,10 +16,11 @@ class RatingServiceTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->reviewRepository = $this->createMock(ReviewRepository::class);
     }
 
-    public function dataProvider(): array
+    public function provider(): array
     {
         return [
             [25, 20, 1.25],
@@ -27,7 +29,7 @@ class RatingServiceTest extends AbstractTestCase
     }
 
     /**
-     * @dataProvider dataProvider
+     * @dataProvider provider
      */
     public function testCalcReviewRatingForBook(int $repositoryRatingSum, int $total, float $expectedRating): void
     {
@@ -36,18 +38,28 @@ class RatingServiceTest extends AbstractTestCase
             ->with(1)
             ->willReturn($repositoryRatingSum);
 
-        $actual = (new RatingService($this->reviewRepository))->calcReviewRatingForBook(1, $total);
+        $this->reviewRepository->expects($this->once())
+            ->method('countByBookId')
+            ->with(1)
+            ->willReturn($total);
 
-        $this->assertEquals($expectedRating, $actual);
+        $this->assertEquals(
+            new Rating($total, $expectedRating),
+            (new RatingService($this->reviewRepository))->calcReviewRatingForBook(1)
+        );
     }
 
     public function testCalcReviewRatingForBookZeroTotal(): void
     {
         $this->reviewRepository->expects($this->never())->method('getBookTotalRatingSum');
+        $this->reviewRepository->expects($this->once())
+            ->method('countByBookId')
+            ->with(1)
+            ->willReturn(0);
 
         $this->assertEquals(
-            0,
-            (new RatingService($this->reviewRepository))->calcReviewRatingForBook(1, 0)
+            new Rating(0, 0),
+            (new RatingService($this->reviewRepository))->calcReviewRatingForBook(1)
         );
     }
 }

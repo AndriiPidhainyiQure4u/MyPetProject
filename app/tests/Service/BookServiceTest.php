@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace App\Tests\Service;
 
 use App\Entity\Book;
+use App\Entity\BookCategory;
+use App\Entity\BookFormat;
+use App\Entity\BookToBookFormat;
 use App\Exception\BookCategoryNotFoundException;
+use App\Model\BookCategory as BookCategoryModel;
+use App\Model\BookDetails;
+use App\Model\BookFormat as BookFormatModel;
 use App\Model\BookListItem;
 use App\Model\BookListResponse;
 use App\Repository\BookCategoryRepository;
 use App\Repository\BookRepository;
 use App\Service\BookService;
+use App\Service\Rating;
 use App\Service\RatingService;
 use App\Tests\AbstractTestCase;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\Model\BookCategory as BookCategoryModel;
-use App\Model\BookDetails;
-use App\Model\BookFormat as BookFormatModel;
-use App\Service\Rating;
 
 class BookServiceTest extends AbstractTestCase
 {
@@ -111,18 +115,33 @@ class BookServiceTest extends AbstractTestCase
 
     private function createBookEntity(): Book
     {
-        $book = (new Book())
-            ->setTitle('Test Book')
+        $category = (new BookCategory())->setTitle('Category')->setSlug('category');
+        $this->setEntityId($category, 1);
+
+        $format = (new BookFormat())->setTitle('format')->setDescription('description format')
+            ->setComment(null);
+
+        $this->setEntityId($format, 1);
+
+        $join = (new BookToBookFormat())->setPrice(123.55)
+            ->setFormat($format)
+            ->setDiscountPercent(5);
+
+        $this->setEntityId($join, 1);
+
+        $book = new Book();
+        $this->setEntityId($book, 123);
+
+        $book->setTitle('Test Book')
             ->setSlug('test-book')
             ->setMeap(false)
             ->setIsbn('123321')
             ->setDescription('test description')
             ->setAuthors(['Tester'])
             ->setImage('http://localhost/test.png')
-            ->setCategories(new ArrayCollection())
-            ->setPublicationDate(new \DateTimeImmutable('2020-10-10'));
-
-        $this->setEntityId($book, 123);
+            ->setCategories(new ArrayCollection([$category]))
+            ->setPublicationDate(new DateTimeImmutable('2020-10-10'))
+            ->setFormats(new ArrayCollection([$join]));
 
         return $book;
     }
