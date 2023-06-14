@@ -8,9 +8,8 @@ use Webmozart\Assert\Assert;
 
 class Role
 {
-    public const USER = 'user';
-    public const ADMIN = 'admin';
-
+    public const USER = 'ROLE_USER';
+    public const ADMIN = 'ROLE_ADMIN';
     private string $name;
 
     public function __construct(string $name)
@@ -26,6 +25,26 @@ class Role
     public static function user(): self
     {
         return new self(self::USER);
+    }
+
+    public static function admin(): self
+    {
+        return new self(self::ADMIN);
+    }
+
+    public function isUser(): bool
+    {
+        return self::USER === $this->name;
+    }
+
+    public function isAdmin(): bool
+    {
+        return self::ADMIN === $this->name;
+    }
+
+    public function isEqual(self $role): bool
+    {
+        return $this->getName() === $role->getName();
     }
 
     public function getName(): string

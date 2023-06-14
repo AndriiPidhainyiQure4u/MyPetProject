@@ -27,9 +27,24 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    Modules\:
+        resource: '../modules/'
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Finesse\SwiftMailerDefaultsPlugin\SwiftMailerDefaultsPlugin:
+        arguments:
+            $defaults:
+                from:
+                    '%env(MAILER_FROM_EMAIL)%': '%env(MAILER_FROM_NAME)%'
+        tags:
+            - { name: swiftmailer.default.plugin }
+
+    Modules\Auth\Service\Tokenizer:
+        factory: 'App\Container\ResetTokenizerFactory::create'
+        arguments: ['PT1H']
 
     App\Service\ExceptionHandler\ExceptionMappingResolver:
         arguments: ['%exceptions%']
@@ -41,7 +56,3 @@ services:
     App\Listener\ValidationExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, priority: 15 }
-
-    App\Listener\Doctrine\FixPostgresSQLDefaultSchemaListener:
-        tags:
-            - { name: doctrine.event_listener, event: postGenerateSchema }

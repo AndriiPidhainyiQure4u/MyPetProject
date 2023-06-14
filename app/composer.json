@@ -11,7 +11,9 @@
         "doctrine/doctrine-bundle": "^2.9",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.15",
+        "finesse/swiftmailer-defaults-plugin": "^2.0",
         "nelmio/api-doc-bundle": "^4.11",
+        "ns3777k/hoverfly": "^1.2",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpstan/phpdoc-parser": "^1.21",
         "ramsey/uuid": "^3.9",
@@ -19,6 +21,7 @@
         "symfony/console": "5.4.*",
         "symfony/dotenv": "5.4.*",
         "symfony/flex": "^1.17|^2",
+        "symfony/form": "5.4.*",
         "symfony/framework-bundle": "5.4.*",
         "symfony/http-client": "5.4.*",
         "symfony/messenger": "5.4.*",
@@ -27,13 +30,13 @@
         "symfony/property-info": "5.4.*",
         "symfony/runtime": "5.4.*",
         "symfony/serializer": "5.4.*",
+        "symfony/swiftmailer-bundle": "^3.1",
         "symfony/twig-bundle": "5.4.*",
         "symfony/validator": "5.4.*",
         "symfony/yaml": "5.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0",
-        "webmozart/assert": "^1.6",
-        "ns3777k/hoverfly": "^1.2"
+        "webmozart/assert": "^1.6"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^7.2",

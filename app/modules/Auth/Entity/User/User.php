@@ -65,6 +65,8 @@ class User
      */
     private Collection $networks;
 
+    // <editor-fold desc="Constructors">
+
     private function __construct(Id $id, \DateTimeImmutable $date, Email $email, Status $status)
     {
         $this->id = $id;
@@ -100,6 +102,7 @@ class User
 
         return $user;
     }
+    // </editor-fold>
 
     public function attachNetwork(Network $network): void
     {
@@ -223,6 +226,9 @@ class User
 
     public function changeRole(Role $role): void
     {
+        if ($this->role->isEqual($role)) {
+            throw new \DomainException('Role is already same.');
+        }
         $this->role = $role;
     }
 

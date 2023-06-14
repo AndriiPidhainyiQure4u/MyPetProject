@@ -24,9 +24,7 @@ class Handler
     {
         $user = $this->users->get(new Id($command->id));
 
-        $user->changeRole(
-            new Role($command->role)
-        );
+        $user->changeRole(new Role($command->role));
 
         $this->flusher->flush();
     }

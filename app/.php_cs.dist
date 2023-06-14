@@ -1,24 +1,20 @@
 <?php
 
+/**
+ * For more information about PHP-CS-Fixer configuration files and options, check
+ * https://github.com/FriendsOfPHP/PHP-CS-Fixer.
+ */
+if (!file_exists(__DIR__.'/src')) {
+    exit(0);
+}
 
-
-$finder = (new PhpCsFixer\Finder())
-    ->in(__DIR__)
-    ->exclude('var')
-;
-
-return (new PhpCsFixer\Config())
+return PhpCsFixer\Config::create()
     ->setUsingCache(false)
     ->setRiskyAllowed(true)
     ->setRules([
-        '@PSR12' => true,
+        '@PSR2' => true,
         '@Symfony' => true,
         '@Symfony:risky' => false,
-
-        'import_classes' => true,
-        'import_constants' => true,
-        'import_functions' => true,
-
         // Binary operators should be surrounded by space as configured.
         'binary_operator_spaces' => true,
 
@@ -390,4 +386,8 @@ return (new PhpCsFixer\Config())
          */
         'array_syntax' => ['syntax' => 'short']
     ])
-    ->setFinder($finder);
+    ->setFinder(
+        PhpCsFixer\Finder::create()
+        ->in(__DIR__.'/src')
+        ->append([__FILE__])
+    );

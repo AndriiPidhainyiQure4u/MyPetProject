@@ -12,11 +12,19 @@ class ChangeRoleTest extends TestCase
 {
     public function testSuccess(): void
     {
-        $user = (new UserBuilder())
-            ->build();
+        $user = (new UserBuilder())->build();
 
         $user->changeRole($role = new Role(Role::ADMIN));
 
         self::assertEquals($role, $user->getRole());
+    }
+
+    public function testAlready(): void
+    {
+        $user = (new UserBuilder())->build();
+        $this->expectExceptionMessage('Role is already same.');
+
+        $user->changeRole(Role::user());
+
     }
 }
