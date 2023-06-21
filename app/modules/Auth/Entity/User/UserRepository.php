@@ -9,17 +9,22 @@ use Doctrine\ORM\EntityRepository;
 
 class UserRepository
 {
-    private EntityRepository $repo;
+    public EntityRepository $repo;
     private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em)
     {
+
         /** @var EntityRepository $repo */
         $repo = $em->getRepository(User::class);
         $this->repo = $repo;
         $this->em = $em;
     }
 
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\NoResultException
+     */
     public function hasByEmail(Email $email): bool
     {
         return $this->repo->createQueryBuilder('t')
@@ -29,6 +34,10 @@ class UserRepository
                 ->getQuery()->getSingleScalarResult() > 0;
     }
 
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Doctrine\ORM\NoResultException
+     */
     public function hasByNetwork(Network $network): bool
     {
         return $this->repo->createQueryBuilder('t')

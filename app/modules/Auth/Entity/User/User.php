@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Modules\Auth\Service\PasswordHasher;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity
@@ -16,7 +18,7 @@ use Modules\Auth\Service\PasswordHasher;
  *
  * @ORM\Table(name="auth_users")
  */
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Column(type="auth_user_id")
@@ -271,5 +273,35 @@ class User
         if ($this->newEmailToken && $this->newEmailToken->isEmpty()) {
             $this->newEmailToken = null;
         }
+    }
+
+    public function getRoles()
+    {
+        return [];
+    }
+
+    public function getPassword(): string
+    {
+        return $this->getPasswordHash();
+    }
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
+
+    public function getUsername(): string
+    {
+       return $this->email->getValue();
+
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->id->getValue();
     }
 }

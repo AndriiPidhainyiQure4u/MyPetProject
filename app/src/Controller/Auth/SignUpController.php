@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
+use App\Model\SignUpRequest;
+use App\Service\SignUpService;
 use Modules\Auth\ReadModel\User\UserFetcher;
 use Modules\Auth\UseCase\SignUp;
 use Psr\Log\LoggerInterface;
@@ -11,11 +13,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use App\Model\IdResponse;
+use App\Model\ErrorResponse;
+use App\Attribute\RequestBody;
 
 class SignUpController extends AbstractController
 {
-    public function __construct(private readonly LoggerInterface $logger, private readonly UserFetcher $users)
-    {
+    public function __construct
+    (
+        private readonly LoggerInterface $logger,
+        private readonly UserFetcher $users,
+        private readonly SignUpService $signUpService
+    ) {
     }
 
     /**
@@ -50,6 +61,31 @@ class SignUpController extends AbstractController
     }
 
     /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Signs up a user",
+     *     @Model(type=IdResponse::class)
+     * )
+     * @OA\Response(
+     *     response="409",
+     *     description="User already exists",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation failed",
+     *     @Model(type=ErrorResponse::class)
+     * )
+     * @OA\RequestBody(@Model(type=SignUpRequest::class))
+     */
+    #[Route(path: '/api/v1/auth/signUp', methods: ['POST'])]
+    public function signUp(#[RequestBody] SignUpRequest $signUpRequest, SignUpService $signUpService): Response
+    {
+        return $signUpService->signUp($signUpRequest);
+    }
+
+
+    /**
      * @Route("/signup/{token}", name="auth.signup.confirm")
      *
      * @param string $token
@@ -75,5 +111,7 @@ class SignUpController extends AbstractController
             $this->addFlash('error', $e->getMessage());
             return $this->redirectToRoute('auth.signup');
         }
+
+        return new Response();
     }
 }

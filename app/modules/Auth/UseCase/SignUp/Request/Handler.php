@@ -6,7 +6,6 @@ namespace Modules\Auth\UseCase\SignUp\Request;
 
 use Modules\Auth\Entity\User\Email;
 use Modules\Auth\Entity\User\Id;
-use Modules\Auth\Entity\User\Token;
 use Modules\Auth\Entity\User\User;
 use Modules\Auth\Entity\User\UserRepository;
 use Modules\Auth\Service\ConfirmTokenSender;
@@ -25,7 +24,7 @@ class Handler
     ) {
     }
 
-    public function handle(Command $command): void
+    public function handle(Command $command): User
     {
         $email = new Email($command->email);
 
@@ -45,5 +44,7 @@ class Handler
 
         $this->sender->send($email, $token->getValue());
         $this->flusher->flush();
+
+        return $user;
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Tests\Listener;
 
 use App\Listener\ApiExceptionListener;
@@ -13,6 +11,7 @@ use App\Tests\AbstractTestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -33,16 +32,12 @@ class ApiExceptionListenerTest extends AbstractTestCase
         $this->serializer = $this->createMock(SerializerInterface::class);
     }
 
-    /**
-     * @throws \JsonException
-     */
-    public function testNot500MappingWithHiddenMessage(): void
+    public function testNon500MappingWithHiddenMessage(): void
     {
         $mapping = ExceptionMapping::fromCode(Response::HTTP_NOT_FOUND);
         $responseMessage = Response::$statusTexts[$mapping->getCode()];
         $responseBody = json_encode(['error' => $responseMessage], JSON_THROW_ON_ERROR);
 
-        // <editor-fold desc="Mock">
         $this->resolver->expects($this->once())
             ->method('resolve')
             ->with(\InvalidArgumentException::class)
@@ -52,7 +47,6 @@ class ApiExceptionListenerTest extends AbstractTestCase
             ->method('serialize')
             ->with(new ErrorResponse($responseMessage), JsonEncoder::FORMAT)
             ->willReturn($responseBody);
-        // </editor-fold>
 
         $event = $this->createExceptionEvent(new \InvalidArgumentException('test'));
 
@@ -65,7 +59,7 @@ class ApiExceptionListenerTest extends AbstractTestCase
     {
         $mapping = new ExceptionMapping(Response::HTTP_NOT_FOUND, false, false);
         $responseMessage = 'test';
-        $responseBody = json_encode(['error' => $responseMessage], JSON_THROW_ON_ERROR);
+        $responseBody = json_encode(['error' => $responseMessage]);
 
         $this->resolver->expects($this->once())
             ->method('resolve')
@@ -114,7 +108,7 @@ class ApiExceptionListenerTest extends AbstractTestCase
     {
         $mapping = ExceptionMapping::fromCode(Response::HTTP_GATEWAY_TIMEOUT);
         $responseMessage = Response::$statusTexts[$mapping->getCode()];
-        $responseBody = json_encode(['error' => $responseMessage]);
+        $responseBody = json_encode(['error' => $responseMessage], JSON_THROW_ON_ERROR);
 
         $this->resolver->expects($this->once())
             ->method('resolve')
@@ -166,7 +160,7 @@ class ApiExceptionListenerTest extends AbstractTestCase
     public function testShowTraceWhenDebug(): void
     {
         $mapping = ExceptionMapping::fromCode(Response::HTTP_NOT_FOUND);
-        $responseMessage = Response::$statusTexts[$mapping->getCode()];
+        $responseMessage = 'error message';
         $responseBody = json_encode(['error' => $responseMessage, 'trace' => 'something']);
 
         $this->resolver->expects($this->once())
@@ -181,18 +175,27 @@ class ApiExceptionListenerTest extends AbstractTestCase
                     /** @var ErrorDebugDetails|object $details */
                     $details = $response->getDetails();
 
-                    return $response->getMessage() === $responseMessage
-                        && $details instanceof ErrorDebugDetails && !empty($details->getTrace());
+                    return $response->getMessage() == $responseMessage &&
+                        $details instanceof ErrorDebugDetails && !empty($details->getTrace());
                 }),
                 JsonEncoder::FORMAT
             )
             ->willReturn($responseBody);
 
-        $event = $this->createExceptionEvent(new \InvalidArgumentException('error message'));
+        $event = $this->createExceptionEvent(new \InvalidArgumentException($responseMessage));
 
         $this->runListener($event, true);
 
         $this->assertResponse(Response::HTTP_NOT_FOUND, $responseBody, $event->getResponse());
+    }
+
+    public function testIgnoreSecurityException(): void
+    {
+        $this->resolver->expects($this->never())
+            ->method('resolve');
+
+        $event = $this->createExceptionEvent(new AuthenticationException());
+        $this->runListener($event, true);
     }
 
     private function runListener(ExceptionEvent $event, bool $isDebug = false): void

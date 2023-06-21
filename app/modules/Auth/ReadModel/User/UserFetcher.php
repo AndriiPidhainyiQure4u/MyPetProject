@@ -42,8 +42,8 @@ final class UserFetcher
                 'status'
             )
             ->from('auth_users')
-            ->where('confirm_token = :token')
-            ->setParameter(':token', $token)
+            ->where('join_confirm_token_value = :token')
+            ->setParameter('token', $token)
             ->executeQuery();
 
       //   $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, ShortView::class);

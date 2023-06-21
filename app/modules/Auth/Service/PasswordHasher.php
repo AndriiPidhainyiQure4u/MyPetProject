@@ -19,9 +19,6 @@ class PasswordHasher
         /** @var string|false|null $hash */
         $hash = password_hash($password, PASSWORD_ARGON2I, ['memory_cost' => $this->memoryCost]);
 
-        if (null === $hash) {
-            throw new \RuntimeException('Invalid hash algorithm.');
-        }
         if (false === $hash) {
             throw new \RuntimeException('Unable to generate hash.');
         }
