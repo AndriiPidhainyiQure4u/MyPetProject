@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @ORM\Table(name="auth_users")
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User //implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Column(type="auth_user_id")

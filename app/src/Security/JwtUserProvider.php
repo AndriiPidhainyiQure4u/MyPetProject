@@ -2,15 +2,15 @@
 
 namespace App\Security;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\PayloadAwareUserProviderInterface;
-use Modules\Auth\Entity\User\User;
-use Modules\Auth\Entity\User\UserRepository;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class JwtUserProvider implements PayloadAwareUserProviderInterface
 {
-    public function __construct(private UserRepository $userRepository)
+    public function __construct(private readonly UserRepository $userRepository)
     {
     }
 
@@ -49,10 +49,10 @@ class JwtUserProvider implements PayloadAwareUserProviderInterface
 
     private function getUser(string $key, mixed $value): UserInterface
     {
-        $user = $this->userRepository->repo->findOneBy([$key => $value]);
+        $user = $this->userRepository->findOneBy([$key => $value]);
         if (null === $user) {
-            $e = new UserNotFoundException('User with id '.json_encode($value).' not found.');
-            $e->setUserIdentifier(json_encode($value));
+            $e = new UserNotFoundException('User with id '. json_encode($value, JSON_THROW_ON_ERROR) .' not found.');
+            $e->setUserIdentifier(json_encode($value, JSON_THROW_ON_ERROR));
 
             throw $e;
         }
