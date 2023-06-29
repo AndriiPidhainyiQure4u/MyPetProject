@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\BookRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -13,34 +15,38 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $title = null;
+    private string $title;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $slug;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $image;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $image;
 
-    #[ORM\Column(type: 'simple_array')]
-    private array $authors;
+    #[ORM\Column(type: 'simple_array', nullable: true)]
+    private ?array $authors;
 
-    #[ORM\Column(type: 'string', length: 13)]
-    private string $isbn;
+    #[ORM\Column(type: 'string', length: 13, nullable: true)]
+    private ?string $isbn;
 
-    #[ORM\Column(type: 'text')]
-    private string $description;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description;
 
-    #[ORM\Column(type: 'date_immutable')]
-    private \DateTimeInterface $publicationDate;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?DateTimeInterface $publicationDate;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $meap;
 
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private UserInterface $user;
+
     /**
-     * @var Collection<Book>
+     * @var Collection<BookCategory>
      */
     #[ORM\ManyToMany(targetEntity: BookCategory::class)]
     #[ORM\JoinTable(name: 'book_to_book_category')]
@@ -70,9 +76,16 @@ class Book
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
     }
 
     public function getSlug(): string
@@ -80,67 +93,43 @@ class Book
         return $this->slug;
     }
 
-    public function setSlug(string $slug): Book
+    public function setSlug(string $slug): self
     {
         $this->slug = $slug;
 
         return $this;
     }
 
-    public function getImage(): string
+    public function getImage(): ?string
     {
         return $this->image;
     }
 
-    public function setImage(string $image): Book
+    public function setImage(?string $image): self
     {
         $this->image = $image;
 
         return $this;
     }
 
-    public function getAuthors(): array
+    public function getAuthors(): ?array
     {
         return $this->authors;
     }
 
-    public function setAuthors(array $authors): self
+    public function setAuthors(?array $authors): self
     {
         $this->authors = $authors;
 
         return $this;
     }
 
-    public function getIsbn(): string
-    {
-        return $this->isbn;
-    }
-
-    public function setIsbn(string $isbn): Book
-    {
-        $this->isbn = $isbn;
-
-        return $this;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): Book
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getPublicationDate(): \DateTimeInterface
+    public function getPublicationDate(): ?DateTimeInterface
     {
         return $this->publicationDate;
     }
 
-    public function setPublicationDate(\DateTimeInterface $publicationDate): Book
+    public function setPublicationDate(?DateTimeInterface $publicationDate): self
     {
         $this->publicationDate = $publicationDate;
 
@@ -152,7 +141,7 @@ class Book
         return $this->meap;
     }
 
-    public function setMeap(bool $meap): Book
+    public function setMeap(bool $meap): self
     {
         $this->meap = $meap;
 
@@ -169,19 +158,35 @@ class Book
 
     /**
      * @param Collection<BookCategory> $categories
-     *
      * @return $this
      */
-    public function setCategories(Collection $categories): Book
+    public function setCategories(Collection $categories): self
     {
         $this->categories = $categories;
 
         return $this;
     }
 
-    public function setTitle(string $title): self
+    public function getIsbn(): ?string
     {
-        $this->title = $title;
+        return $this->isbn;
+    }
+
+    public function setIsbn(?string $isbn): self
+    {
+        $this->isbn = $isbn;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -191,9 +196,11 @@ class Book
         return $this->formats;
     }
 
-    public function setFormats(Collection $formats): void
+    public function setFormats(Collection $formats): self
     {
         $this->formats = $formats;
+
+        return $this;
     }
 
     public function getReviews(): Collection
@@ -204,6 +211,18 @@ class Book
     public function setReviews(Collection $reviews): self
     {
         $this->reviews = $reviews;
+
+        return $this;
+    }
+
+    public function getUser(): UserInterface
+    {
+        return $this->user;
+    }
+
+    public function setUser(UserInterface $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
